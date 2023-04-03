@@ -1,10 +1,18 @@
 #!/bin/bash
 
-VALHEIM_DIR="/home/fserver/valheim-server/serverfiles/"
+VALHEIM_DIR=""
 SCREEN_NAME="valheim_server"
-WEBHOOK_DISCORD="https://discord.com/api/webhooks/1091877560587124766/BltUqAhyqz7OXk6gDowTofABpOufim0c-21w8b0ym32hGLoFyFvFzzRZ-O1xahF4vi9a"
+WEBHOOK_DISCORD=""
 
 start_server() {
+    # Mise à jour ou install du serveur Valheim
+    steamcmd +@sSteamCmdForcePlatformType linux +force_install_dir "${VALHEIM_DIR}" +login anonymous +app_update 896660 -beta none validate +quit
+    if [ $? -ne 0 ]; then
+        echo "Erreur lors de la mise à jour du serveur Valheim"
+        exit 1
+    fi
+    
+    # Lancement du serveur Valheim
     cd "${VALHEIM_DIR}"
     curl -X POST -H "Content-Type: application/json" -d '{"content":"Start serveur"}' $WEBHOOK_DISCORD
     screen -dmS "${SCREEN_NAME}" ./start_server_bepinex.sh
@@ -12,33 +20,38 @@ start_server() {
 }
 
 long_alert() {
+    # Simple message d'alerte
     curl -X POST -H "Content-Type: application/json" -d '{"content":"Attention le serveur stop dans 10min"}' $WEBHOOK_DISCORD
     echo "Attention le serveur s'eteindra dans 10min"
 }
 
 short_alert() {
+    # Simple message d'alerte
     curl -X POST -H "Content-Type: application/json" -d '{"content":"Attention le serveur stop dans 5min"}' $WEBHOOK_DISCORD
     echo "Attention le serveur s'eteint dans 5min"
 }
 
 stop_server() {
+    # Stop différé du serveur et le redémarre physiquement
     curl -X POST -H "Content-Type: application/json" -d '{"content":"Arrêt programmé du serveur"}' $WEBHOOK_DISCORD
     echo "Valheim server stopped!"
-    sleep 30m
+    sleep 10s ##30min
     screen -S "${SCREEN_NAME}" -X quit
     curl -X POST -H "Content-Type: application/json" -d '{"content":"Serveur arrété"}' $WEBHOOK_DISCORD
     echo "Valheim server stopped!"
+    sudo reboot
 }
 
 force_stop_server() {
+    # Stop immédiat
     screen -S "${SCREEN_NAME}" -X quit
     sleep 10s
     curl -X POST -H "Content-Type: application/json" -d '{"content":"Serveur arrété"}' $WEBHOOK_DISCORD
     echo "Valheim server force stopped!"
-    sudo reboot
 }
 
 status_server() {
+    # Donne le statut du serveur
     if screen -list | grep -q "${SCREEN_NAME}"; then
         curl -X POST -H "Content-Type: application/json" -d '{"content":"Le serveur est démarré"}' $WEBHOOK_DISCORD
         echo "Valheim server is running."
