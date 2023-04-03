@@ -35,7 +35,7 @@ stop_server() {
     # Stop différé du serveur et le redémarre physiquement
     curl -X POST -H "Content-Type: application/json" -d '{"content":"Arrêt programmé du serveur"}' $WEBHOOK_DISCORD
     echo "Valheim server stopped!"
-    sleep 10s ##30min
+    sleep 30min
     screen -S "${SCREEN_NAME}" -X quit
     curl -X POST -H "Content-Type: application/json" -d '{"content":"Serveur arrété"}' $WEBHOOK_DISCORD
     echo "Valheim server stopped!"
