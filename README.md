@@ -1,14 +1,17 @@
 # Valheim Server Manager
 
 Ce script en bash permet de gérer facilement un serveur Valheim, en lançant le serveur, en le stoppant, en vérifiant son statut, etc.
+Il appelle start_server_bepinex.sh penser à le modifier si votre serveur n'utilise pas bepinex!
 
 ## Configuration
 
-Le fichier de configuration se trouve en haut du script et peut être modifié en fonction de vos besoins :
+Le fichier de configuration se trouve en haut du script manage-server.sh et peut être modifié en fonction de vos besoins :
 
 - `VALHEIM_DIR` : Le dossier d'installation du serveur Valheim.
 - `SCREEN_NAME` : Le nom de la session screen dans laquelle le serveur Valheim sera lancé.
 - `WEBHOOK_DISCORD` : L'URL du webhook Discord pour les notifications.
+
+Est inclus aussi le install-server.sh pour installer valheim via Steam CLI
 
 ## Utilisation
 
